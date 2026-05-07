@@ -103,7 +103,7 @@ def parse_print(output: str) -> dict:
         output: Raw GDB print output
 
     Returns:
-        {"var", "value", "type"}
+        {"var", "value", "type"} or {"output"} when GDB returned an error/message
     """
     result = {}
 
@@ -116,6 +116,8 @@ def parse_print(output: str) -> dict:
         if match.group(2):
             result["type"] = match.group(2)
         result["value"] = match.group(3).strip()
+    elif output.strip():
+        result["output"] = output.strip()
 
     return result
 

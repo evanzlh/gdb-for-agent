@@ -107,6 +107,12 @@ class TestPrintParser:
         assert "type" in result
         assert result["type"] == "int *"
 
+    def test_parse_error_preserves_output(self):
+        """Test parsing print errors preserves the raw GDB message."""
+        output = 'No symbol "robot" in current context.'
+        result = parse_print(output)
+        assert result == {"output": output}
+
 
 class TestRegistersParser:
     """Tests for registers output parsing."""
@@ -199,3 +205,9 @@ class TestParseOutput:
         output = "Some random output"
         result = parse_output("some_command", output)
         assert result["output"] == output
+
+    def test_print_error_returns_raw(self):
+        """Test print command errors return raw GDB output."""
+        output = 'No symbol "robot" in current context.'
+        result = parse_output("print robot->loads_.size()", output)
+        assert result == {"output": output}
