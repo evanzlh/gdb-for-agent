@@ -244,6 +244,15 @@ Commands like `run`, `start`, `continue`, `step`, `next` block until:
 
 Only use `--timeout` when you expect the program to run longer than 90 seconds (e.g., long-running tests, slow startup).
 
+## No Concurrent Commands Within a Session
+
+**NEVER send multiple commands to the same session concurrently.** Each session uses a single GDB process with synchronous blocking I/O. Commands within a session are serialized by an internal lock — a second command will block until the first completes, and may produce undefined results if the GDB prompt was already consumed.
+
+Rules:
+- Always wait for the previous command to return before sending the next one in the same session
+- If you need parallel debugging, create separate sessions (each session has its own independent GDB process)
+- The only exception is `interrupt`, which is designed to be sent while another command is blocking
+
 ## Structured Output
 
 These commands return parsed JSON:
